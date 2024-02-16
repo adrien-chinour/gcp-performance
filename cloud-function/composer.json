@@ -1,0 +1,13 @@
+{
+  "require": {
+    "php": "^8.2",
+    "google/cloud-functions-framework": "^1.3",
+    "erusev/parsedown": "^1.7"
+  },
+  "scripts": {
+    "start": [
+      "Composer\\Config::disableProcessTimeout",
+      "FUNCTION_TARGET=index php -S localhost:${PORT:-8080} vendor/google/cloud-functions-framework/router.php"
+    ]
+  }
+}

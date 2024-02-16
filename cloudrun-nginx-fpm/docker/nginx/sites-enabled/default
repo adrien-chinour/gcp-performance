@@ -1,0 +1,38 @@
+server {
+    listen 80;
+    root /var/www/public;
+    index index.php index.html index.htm;
+
+    server_name _;
+
+    sendfile off;
+    error_log off;
+    access_log off;
+
+    location /.git {
+        deny all;
+        return 403;
+    }
+
+    location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        # fastcgi_pass 127.0.0.1:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param HTTPS $httpsParam;
+
+        # FIXME upgrade buffer size resolve truncate response on Cloud Run
+        fastcgi_buffer_size 1m;
+        fastcgi_buffers 8 1m;
+    }
+
+    location ~ /\. {
+        log_not_found off;
+        deny all;
+    }
+}
